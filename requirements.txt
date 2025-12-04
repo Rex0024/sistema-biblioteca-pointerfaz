@@ -1,0 +1,141 @@
+# Sistema de Gestión de Biblioteca - Requisitos del Sistema
+
+## Software Requerido
+
+### 1. Java Development Kit (JDK)
+- **Versión**: JDK 21 o superior
+- **Descarga**: https://www.oracle.com/java/technologies/downloads/
+- **Verificar instalación**: 
+  ```bash
+  java -version
+  javac -version
+  ```
+
+### 2. MySQL Server
+- **Versión**: MySQL 8.0 o superior
+- **Descarga**: https://dev.mysql.com/downloads/mysql/
+- **Alternativa recomendada**: Laragon (incluye MySQL)
+  - Descarga: https://laragon.org/download/
+
+### 3. MySQL Connector/J (Incluido en el proyecto)
+- **Versión**: 8.0.33
+- **Ubicación**: `lib/mysql-connector-j-8.0.33.jar`
+- **Nota**: Ya está incluido en el proyecto, no necesitas descargarlo
+
+### 4. Maven (Opcional)
+- **Versión**: 3.6 o superior
+- **Descarga**: https://maven.apache.org/download.cgi
+- **Nota**: Opcional, el proyecto puede compilarse manualmente
+
+## Configuración del Entorno
+
+### Paso 1: Instalar JDK 21
+1. Descarga e instala JDK 21
+2. Configura la variable de entorno `JAVA_HOME`
+3. Agrega `%JAVA_HOME%\bin` al PATH
+
+### Paso 2: Instalar MySQL
+1. Instala MySQL Server 8.0+
+2. Configura usuario root (sin contraseña o recuerda la contraseña)
+3. Asegúrate que el servicio MySQL esté corriendo en puerto 3306
+
+### Paso 3: Crear Base de Datos
+1. Abre tu cliente MySQL (HeidiSQL, MySQL Workbench, o línea de comandos)
+2. Ejecuta el script SQL ubicado en `database/biblioteca_schema.sql`
+3. (Opcional) Ejecuta `database/biblioteca_datos_iniciales.sql` para datos de prueba
+
+### Paso 4: Configurar Conexión
+1. Edita el archivo: `src/main/java/com/pointerfaz/db/ConnectionDB.java`
+2. Modifica las credenciales si es necesario:
+   ```java
+   private static final String URL = "jdbc:mysql://127.0.0.1:3306/biblioteca_pointerfaz";
+   private static final String USER = "root";
+   private static final String PASSWORD = ""; // Cambia si tienes contraseña
+   ```
+
+## Compilación y Ejecución
+
+### Opción 1: Compilación Manual (PowerShell en Windows)
+
+```powershell
+# Compilar todos los archivos Java
+javac -encoding UTF-8 -cp "lib\mysql-connector-j-8.0.33.jar" -d target/classes -sourcepath src/main/java (Get-ChildItem -Path "src/main/java" -Filter "*.java" -Recurse | Select-Object -ExpandProperty FullName)
+
+# Ejecutar el programa
+java -cp "target/classes;lib\mysql-connector-j-8.0.33.jar" com.pointerfaz.Main
+```
+
+### Opción 2: Usando Maven
+
+```bash
+# Compilar
+mvn compile
+
+# Ejecutar
+mvn exec:java
+
+# Crear JAR ejecutable
+mvn package
+```
+
+## Verificación de la Instalación
+
+### 1. Verificar Java
+```bash
+java -version
+# Debe mostrar: java version "21.x.x" o superior
+```
+
+### 2. Verificar MySQL
+```bash
+mysql -u root -p
+# Debe conectarse a MySQL
+```
+
+### 3. Verificar Base de Datos
+```sql
+SHOW DATABASES;
+# Debe aparecer 'biblioteca_pointerfaz'
+
+USE biblioteca_pointerfaz;
+SHOW TABLES;
+# Debe mostrar: personas, estudiantes, estudiantes_graduados, profesores, libros, prestamos
+```
+
+## Solución de Problemas Comunes
+
+### Error: "ClassNotFoundException: com.mysql.cj.jdbc.Driver"
+- **Solución**: Verifica que `lib/mysql-connector-j-8.0.33.jar` esté en la carpeta correcta
+
+### Error: "Communications link failure"
+- **Solución**: 
+  1. Verifica que MySQL esté corriendo
+  2. Confirma el puerto (debe ser 3306)
+  3. Verifica credenciales en ConnectionDB.java
+
+### Error: "Unknown database 'biblioteca_pointerfaz'"
+- **Solución**: Ejecuta el script `database/biblioteca_schema.sql` para crear la base de datos
+
+### Error: "Access denied for user 'root'@'localhost'"
+- **Solución**: Cambia la contraseña en ConnectionDB.java según tu configuración de MySQL
+
+## Usuarios de Prueba (Después de ejecutar datos iniciales)
+
+**Estudiantes:**
+- Email: `juan.perez@universidad.edu` / Password: `pass123`
+- Email: `maria.garcia@universidad.edu` / Password: `pass123`
+
+**Profesores:**
+- Email: `carlos.rodriguez@universidad.edu` / Password: `pass123`
+- Email: `ana.martinez@universidad.edu` / Password: `pass123`
+
+## Recursos Adicionales
+
+- **Documentación MySQL**: https://dev.mysql.com/doc/
+- **Tutorial Java Swing**: https://docs.oracle.com/javase/tutorial/uiswing/
+- **JDBC Guide**: https://docs.oracle.com/javase/tutorial/jdbc/
+
+## Soporte
+
+Para reportar problemas o sugerencias, abre un issue en:
+https://github.com/Rex0024/sistema-biblioteca-pointerfaz/issues
